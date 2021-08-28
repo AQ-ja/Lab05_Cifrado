@@ -6,7 +6,6 @@ from base64 import b64encode, b64decode
 from hashlib import md5
 
 
-
 """
 # ------------------------------------- PRIMERA PARTE ------------------------------------------
 key = get_random_bytes(16)
@@ -80,17 +79,19 @@ class AESCipher:
 
     def encrypt(self, data):
         key = get_random_bytes(16)
-        print("La contraseña es: ", key )
+        print("La contraseña es: ", key)
         iv = get_random_bytes(AES.block_size)
         self.cipher = AES.new(key, AES.MODE_CBC, iv)
-        return b64encode(iv + self.cipher.encrypt(pad(data.encode('utf-8'), 
-        AES.block_size)))
+        return b64encode(iv + self.cipher.encrypt(pad(data.encode('utf-8'),
+                                                      AES.block_size)))
+
 
 def decrypt(self, data):
     key = input()
     raw = b64decode(data)
     self.cipher = AES.new(key, AES.MODE_CBC, raw[:AES.block_size])
     return unpad(self.cipher.decrypt(raw[AES.block_size:]), AES.block_size)
+
 
 if __name__ == '__main__':
     print('TESTING ENCRYPTION')
@@ -102,4 +103,3 @@ if __name__ == '__main__':
     cte = input('Ciphertext: ')
     pwd = input('Password..: ')
     print('Message...:', AESCipher(pwd).decrypt(cte).decode('utf-8'))
-
