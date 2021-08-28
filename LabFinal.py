@@ -2,6 +2,7 @@ from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad
 from Crypto.Util.Padding import unpad
+from base64 import b64encode
 
 # ------------------------------------- PRIMERA PARTE --------------------------------------------
 key = get_random_bytes(16)
@@ -34,64 +35,64 @@ print("------------------------------------------------------")
 
 # ------------------------------------- SEGUNDA PARTE --------------------------------------------
 # METODO CFB
-# === Encriptado ===
-output_file = 'PruebaCFB.bin'
-data = b'Esta es solo una prueba!'
 key = get_random_bytes(16)
-key1 = key
-
-cipher = AES.new(key1, AES.MODE_CFB) # CFB mode
-ciphered_data = cipher.encrypt(data) # Only need to encrypt the data, no padding required for this mode
-
-file_out = open(output_file, "wb") 
-file_out.write(cipher.iv)
-file_out.write(ciphered_data)
-file_out.close()
-
+print(" CFB ")
+print("------------------------------------------------------")
+print("La llave que se usara es: ", key)
+data_to_encrypt = "Esta es solo una prueba del metodo"
+print("Este sera la cadena a usar:", data_to_encrypt)
+print("------------------------------------------------------")
+#  === Encriptado ===
+data = data_to_encrypt.encode('utf-8')
+cipher_encrypt = AES.new(key, AES.MODE_CFB)
+ciphered_bytes = cipher_encrypt.encrypt(data)
+iv = cipher_encrypt.iv
+ciphered_data = ciphered_bytes
+print("------------------------------------------------------")
+print("La cadena cifrada es: ", ciphered_bytes)
+print("------------------------------------------------------")
 # === Decriptado ===
-input_file = 'PruebaCFB.bin'
-key = key1
-file_in = open(input_file, 'rb')
-iv = file_in.read(16)
-ciphered_data = file_in.read()
-print()
-file_in.close()
+cipher_decrypt = AES.new(key, AES.MODE_CFB, iv=iv)
+deciphered_bytes = cipher_decrypt.decrypt(ciphered_data)
+decrypted_data = deciphered_bytes.decode('utf-8')
+print("------------------------------------------------------")
+print("La cadena descifrada es: ", decrypted_data)
+print("TEXTO ORIGINAL: ", data_to_encrypt)
+print("TEXTO DESCIFRADO: ", decrypted_data)
+print('La cadena cifrada y descifrada son identicas.')
+print("------------------------------------------------------")
 
-cipher = AES.new(key, AES.MODE_CFB, iv=iv)
-original_data = cipher.decrypt(ciphered_data) # No need to un-pad
 
-
-"""
 
 # METODO CBC
 # _____________________________________ Encriptado _______________________________________________
-data = b'Esta es una prueba!'  # Must be a bytes object
-key = key1 # The key you generated
+key2 = get_random_bytes(16)
+print(" CBC ")
+print("---------------------------------------------------------------------------------------")
+print("La llave que se usara sera: ", key2)
+data2encryp = "Prueba para el laboratorio!" # Must be a bytes object
+print("Esta sera la cadena a usar: ", data2encryp)
 
-output_file = 'PruebaCBC.bin' # Output file
-# Create cipher object and encrypt the data
-cipher = AES.new(key, AES.MODE_CBC) # Create a AES cipher object with the key using the mode CBC
-ciphered_data = cipher.encrypt(pad(data, AES.block_size)) # Pad the input data and then encrypt
-
-file_out = open(output_file, "wb") # Open file to write bytes
-file_out.write(cipher.iv) # Write the iv to the output file (will be required for decryption)
-file_out.write(ciphered_data) # Write the varying length ciphertext to the file (this is the encrypted data)
-file_out.close()
-
-# _______________________________________ Decriptado ______________________________________________
-input_file = 'PruebaCBC.bin' # Input file
-key = key1 # The key used for encryption (do not store/read this from the file)
-# Read the data from the file
-file_in = open(input_file, 'rb') # Open the file to read bytes
-iv = file_in.read(16) # Read the iv out - this is 16 bytes long
-ciphered_data = file_in.read() # Read the rest of the data
-file_in.close()
-
-cipher = AES.new(key, AES.MODE_CBC, iv=iv)  # Setup cipher
-original_data = unpad(cipher.decrypt(ciphered_data), AES.block_size) # Decrypt and then up-pad the result
+# === Encriptado ===
+dat = data2encryp.encode("utf-8")
+c_encry = AES.new(key2, AES.MODE_CBC)
+ciph_data = c_encry.encrypt(pad(dat, AES.block_size)) # Pad the input data and then encrypt
+iv2 = c_encry.iv
+ciph_byes = ciph_data
+print("------------------------------------------------------")
+print("La cadena cifrada es: ", ciph_data)
+print("------------------------------------------------------")
 
 
 
+
+# === Decriptado ===
+ciph_data = AES.new(key2, AES.MODE_CBC, iv2=iv2)  # Setup cipher
+original_data = unpad(ciph_data.decrypt(ciphered_data), AES.block_size) # Decrypt and then up-pad the result
+print(original_data)
+
+
+"""
 
 # METODO EAX
 # _____________________________________________ Encriptado ____________________________________________________
